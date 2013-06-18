@@ -6,8 +6,7 @@ These instructions have been tested on ubuntu 12.04, using Python version 2.7.3.
 Get the code
 ============
 
-    git clone git@github.com:metaswitch.crest.git
-    git submodule update --init --recursive
+    git clone --recursive https://github.com/Metaswitch/crest.git
 
 The code consists of the `crest` repository and its submodules as
 defined in `.gitmodules`:
@@ -70,7 +69,7 @@ Local settings
 
 It's useful to override the default settings of the project for local debugging.
 To avoid accidentally checking in such changes, the settings module loads a local
-override file from `src/metaswtich/homer/local_settings.py`.  The file is
+override file from `src/metaswitch/homer/local_settings.py`.  The file is
 executed in the context of `settings.py` after `settings.py` completes.  Anything
 that could be put at the bottom of `settings.py` can be put in `local_settings.py`.
 
