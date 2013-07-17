@@ -41,6 +41,7 @@ from telephus.client import CassandraClient
 from telephus.cassandra.ttypes import NotFoundException
 from twisted.internet import defer
 
+from metaswitch.crest import settings
 from metaswitch.crest.api._base import BaseHandler
 
 _log = logging.getLogger("crest.api")
@@ -65,6 +66,14 @@ class PassthroughHandler(BaseHandler):
         self.table = table
         self.column = column
         self.cass = CassandraClient(self.application.cassandra_factory)
+        self.check_columns_exist(settings.CASS_KEYSPACE)
+
+    @defer.inlineCallbacks
+    def check_columns_exist(self, keyspace):
+        result = yield self.cass.describe_keyspace(keyspace)
+        if not result.cf_defs:
+            raise Exception( "No column families found in keyspace!")
+
 
     @defer.inlineCallbacks
     def get(self, row):
