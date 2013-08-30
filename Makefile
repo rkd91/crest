@@ -1,5 +1,5 @@
 ENV_DIR := $(shell pwd)/_env
-PYTHON_BIN := $(shell which python)
+PYTHON_BIN := $(shell which pypy)
 
 DEB_COMPONENT := homer
 DEB_MAJOR_VERSION := 1.0
