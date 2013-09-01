@@ -57,5 +57,5 @@ setup(
     package_dir={'':'src'},
     package_data={'': ['*.xsd', 'dictionary.xml']},
     test_suite='metaswitch.crest.test',
-    install_requires=["Mock", "cyclone", "cql"],
+    install_requires=["Mock", "cyclone"],
     )

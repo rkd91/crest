@@ -38,7 +38,6 @@ import json
 import traceback
 import httplib
 
-import msgpack
 import cyclone.web
 from cyclone.web import HTTPError
 from twisted.python.failure import Failure
@@ -187,11 +186,6 @@ class BaseHandler(cyclone.web.RequestHandler):
         _loadmonitor.request_complete(latency)
 
     def write(self, chunk):
-        if (isinstance(chunk, dict) and
-            "application/x-msgpack" in self.request.headers.get("Accept", "")):
-            _log.debug("Responding with msgpack")
-            self.set_header("Content-Type", "application/x-msgpack")
-            chunk = msgpack.dumps(chunk)
         _log.debug("Sending response to %s - %s %s://%s%s = %s" %
                    (self.request.remote_ip, self.request.method, self.request.protocol, self.request.host, self.request.uri, chunk))
         cyclone.web.RequestHandler.write(self, chunk)
@@ -294,7 +288,7 @@ class BaseHandler(cyclone.web.RequestHandler):
 
 class UnknownApiHandler(BaseHandler):
     """
-    Handler that sends a 404 JSON/msgpack/etc response to all requests.
+    Handler that sends a 404 JSON/etc response to all requests.
     """
     def get(self):
         self.send_error(404)

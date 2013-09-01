@@ -36,7 +36,6 @@
 
 
 import logging
-import cql
 
 from metaswitch.crest import logging_config
 from metaswitch.crest.tools import connection
@@ -47,48 +46,3 @@ _log = logging.getLogger("crest.upgrade_homestead_db")
 
 def standalone():
     c = connection.cursor()
-
-    try:
-        c.execute("select * from public_ids;")
-    except cql.ProgrammingError:
-        print ("Newer Homestead tables don't exist, create and populate them")
-        create_statements = get_create_statements()
-        print "Create statements: ", create_statements
-        for cs in create_statements:
-            try:
-                print "executing %s" % cs
-                c.execute(cs)
-            except Exception:
-                _log.exception("Failed to create table")
-                pass
-            print "Done."
-
-        # For each entry in the SIP_DIGESTS table, create entries in the
-        # public_ids and private_ids tables that contain the mapping
-        # private_id:<xxx> - public_id:<sip:xxx> - this is what earlier versions
-        # of Clearwater simulated but did not store in the database.
-        c.execute("SELECT private_id from %s;" % config.SIP_DIGESTS_TABLE)
-        private_ids = []
-        while True:
-            row = c.fetchone()
-            if row == None:
-                break
-            private_ids.append(row[0])
-        print ("List of private IDs: %s" % private_ids)
-
-        for priv in private_ids:
-            pub = "sip:" + priv
-            print ("Inserting private/public ID pair: %s/%s" % (priv, pub))
-            try:
-                c.execute("INSERT INTO %s (public_id, '%s') values ('%s', '%s');" % (config.PRIVATE_IDS_TABLE, priv, pub, priv))
-                c.execute("INSERT INTO %s (private_id, '%s') values ('%s', '%s');" % (config.PUBLIC_IDS_TABLE, pub, priv, pub))
-            except Exception:
-                _log.exception("Failed to insert private/public ID pair: %s/%s" % (priv, pub))
-                pass
-            print "Done."
-
-    c.close()
-
-if __name__ == '__main__':
-    logging_config.configure_logging("upgrade_homestead_db")
-    standalone()

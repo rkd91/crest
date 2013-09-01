@@ -45,7 +45,7 @@ from socket import AF_INET
 import cyclone.options
 import cyclone.web
 from telephus.protocol import ManagedCassandraClientFactory
-from twisted.internet import ssl, reactor
+from twisted.internet import reactor
 
 from metaswitch.crest import api
 from metaswitch.crest import settings, logging_config
